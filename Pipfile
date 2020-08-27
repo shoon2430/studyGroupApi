@@ -4,10 +4,20 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+black = "*"
 
 [packages]
 django = "==3.0.4"
 gunicorn = "==20.0.4"
+pillow = "*"
+django-dotenv = "*"
+psycopg2 = "*"
+djangorestframework = "*"
+pygments = "*"
+pipenv-to-requirements = "*"
 
 [requires]
 python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true

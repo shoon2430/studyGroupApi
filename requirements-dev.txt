@@ -10,11 +10,4 @@
 # `Pipfile.lock` and then regenerate `requirements*.txt`.
 ################################################################################
 
-django-dotenv
-django==3.0.4
-djangorestframework
-gunicorn==20.0.4
-pillow
-pipenv-to-requirements
-psycopg2
-pygments
+black
