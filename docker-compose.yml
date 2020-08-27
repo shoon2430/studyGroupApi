@@ -14,7 +14,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: gunicorn api.wsgi:application --bind 0.0.0.0:8000
+    command: ./start-dev.sh
     volumes:
       - .:/code
     expose:
