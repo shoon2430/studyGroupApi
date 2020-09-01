@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 
 from .models import User
-from .serializers import UserCreateSerializer
+from .serializers import UserBaseSerializer
 
 
 class ModelTestCase(APITestCase):
@@ -18,12 +18,13 @@ class ModelTestCase(APITestCase):
         }
 
         self.user2 = {
-            "username": "test1",
+            "username": "test2",
             "email": "test@local.host",
             "password": "1234",
             "name": "jsh",
         }
 
+    # 유저 생성 테스트
     def test_create_user(self):
         url = reverse("users:create")
         data = self.user1
