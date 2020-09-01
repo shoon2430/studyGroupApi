@@ -38,8 +38,10 @@ DJANGO_APPS = [
 ]
 
 PROJECT_APPS = [
-    "groups.apps.GroupsConfig",
+    "core.apps.CoreConfig",
     "users.apps.UsersConfig",
+    "groups.apps.GroupsConfig",
+    "todos.apps.TodosConfig",
 ]
 
 

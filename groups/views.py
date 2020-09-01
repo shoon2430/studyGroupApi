@@ -1,3 +1,10 @@
-from django.shortcuts import render
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .serializers import GroupListSerializer
+from .models import Group
 
-# Create your views here.
+
+class showAllGroupList(APIView):
+    def get(self, request):
+        serializer = GroupListSerializer(Group.objects.all(), many=True)
+        return Response(serializer.data)
