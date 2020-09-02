@@ -6,9 +6,13 @@ from users.serializers import UserBaseSerializer
 
 class GroupBaseSerializer(serializers.ModelSerializer):
     leader = UserBaseSerializer(read_only=True)
+    time = serializers.IntegerField(read_only=True)
     members = UserBaseSerializer(many=True, read_only=True)
     attends = UserBaseSerializer(many=True, read_only=True)
-    leader_id = serializers.CharField(write_only=True)
+
+    def __init__(self, leader, *args, **kwargs):
+        super(GroupBaseSerializer, self).__init__(*args, **kwargs)
+        self.leader = leader
 
     class Meta:
         model = Group
@@ -17,20 +21,17 @@ class GroupBaseSerializer(serializers.ModelSerializer):
             "title",
             "discription",
             "leader",
-            "leader_id",
             "time",
             "members",
             "attends",
         )
 
     def create(self, validated_data):
-        user = User.objects.get(username=validated_data["leader_id"])
         group = Group.objects.create(
             category=validated_data["category"],
             title=validated_data["title"],
             discription=validated_data["discription"],
-            time=validated_data["time"],
-            leader=user,
+            leader=self.leader,
         )
         return group
 

@@ -1,5 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
+
 from .serializers import (
     GroupBaseSerializer,
     attendToGroupSerializer,
@@ -11,12 +14,15 @@ from .permissions import groupAttendApplyPermissions, groupConfirmMemberPermissi
 
 
 class createAndShowGroupInfo(APIView):
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get(self, request):
         serializer = GroupBaseSerializer(Group.objects.all(), many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = GroupBaseSerializer(data=request.data)
+        serializer = GroupBaseSerializer(leader=request.user, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)
