@@ -13,5 +13,4 @@ class UserBaseSerializer(ModelSerializer):
         }
 
     def validate(self, data):
-        print("test")
         return data

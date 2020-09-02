@@ -13,6 +13,7 @@ class Group(TimeStampModel):
         "users.User", related_name="leader", on_delete=models.CASCADE
     )
     members = models.ManyToManyField("users.User", related_name="members", blank=True)
+    attends = models.ManyToManyField("users.User", related_name="attends", blank=True)
     time = models.IntegerField()
 
     def __str__(self):
