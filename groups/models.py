@@ -14,7 +14,7 @@ class Group(TimeStampModel):
     )
     members = models.ManyToManyField("users.User", related_name="members", blank=True)
     attends = models.ManyToManyField("users.User", related_name="attends", blank=True)
-    time = models.IntegerField()
+    time = models.IntegerField(default=1)
 
     def __str__(self):
         return self.title
