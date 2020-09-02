@@ -10,26 +10,19 @@ from .serializers import UserBaseSerializer
 
 class ModelTestCase(APITestCase):
     def setUp(self):
-        self.user1 = {
-            "username": "test1",
-            "email": "test@local.host",
-            "password": "1234",
-            "name": "jsh",
-        }
 
-        self.user2 = {
-            "username": "test2",
+        self.user = {
+            "username": "local",
             "email": "test@local.host",
             "password": "1234",
             "name": "jsh",
         }
+        url = reverse("users:create")
+        data = self.user
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     # 유저 생성 테스트
     def test_create_user(self):
-        url = reverse("users:create")
-        data = self.user1
-        response = self.client.post(url, data, format="json")
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), 1)
         self.assertEqual(User.objects.get().name, "jsh")

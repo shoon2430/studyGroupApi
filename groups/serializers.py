@@ -45,10 +45,6 @@ class attendToGroupSerializer(serializers.ModelSerializer):
         model = Group
         fields = ("userId",)
 
-    def update(self, instance, validated_data):
-        return super().update(instance, validated_data)
-
     def create(self, validated_data):
-
         self.group.members.add(User.objects.get(username=validated_data["userId"]))
         return self.group
