@@ -15,6 +15,9 @@ psycopg2 = "*"
 djangorestframework = "*"
 pygments = "*"
 pipenv-to-requirements = "*"
+djangorestframework-jwt = "*"
+django-rest-auth = "*"
+django-allauth = "*"
 
 [requires]
 python_version = "3.7"
