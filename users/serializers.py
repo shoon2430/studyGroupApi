@@ -60,7 +60,6 @@ class UserUpdateSerializer(serializers.Serializer):
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        print(instance)
         instance.email = validated_data.get("email", instance.email)
         instance.nickname = validated_data.get("nickname", instance.nickname)
         instance.phone = validated_data.get("phone", instance.phone)
@@ -79,12 +78,12 @@ class UserLoginSerializer(serializers.Serializer):
         password = data.get("password", None)
         try:
             user = authenticate(username=username, password=password)
+            if user is None:
+                raise serializers.ValidationError("아이디와 비밀번호를 확인해주세요")
 
             payload = jwt_payload_handler(user)
             jwt_token = jwt_encode_handler(payload)
-            update_last_login(None, user)
+
         except User.DoesNotExist:
-            raise serializers.ValidationError(
-                "User with given userId and password does not exists"
-            )
+            raise serializers.ValidationError("존재하지 않는 유저입니다.")
         return {"username": user.username, "token": jwt_token}

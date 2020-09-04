@@ -6,8 +6,6 @@ from .models import User
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
 
-    USERADMIN_FIELDS = UserAdmin.fieldsets
-
     COSTOM_FIELDS = (
         (
             ("CostomFields"),
@@ -23,9 +21,20 @@ class UserAdmin(admin.ModelAdmin):
             },
         ),
         (("Important dates"), {"fields": ("last_login", "date_joined")}),
+        (
+            ("Permissions"),
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "user_permissions",
+                )
+            },
+        ),
     )
 
-    fieldsets = USERADMIN_FIELDS
+    fieldsets = COSTOM_FIELDS
 
     list_display = (
         "username",
