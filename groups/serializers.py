@@ -5,6 +5,7 @@ from users.serializers import UserBaseSerializer
 
 
 class GroupBaseSerializer(serializers.ModelSerializer):
+    photo = serializers.ImageField(use_url=True)
     leader = UserBaseSerializer(read_only=True)
     time = serializers.IntegerField(read_only=True)
     members = UserBaseSerializer(many=True, read_only=True)
@@ -17,6 +18,7 @@ class GroupBaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = (
+            "photo",
             "category",
             "title",
             "discription",
@@ -28,6 +30,7 @@ class GroupBaseSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         group = Group.objects.create(
+            photo=validated_data["photo"],
             category=validated_data["category"],
             title=validated_data["title"],
             discription=validated_data["discription"],

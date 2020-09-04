@@ -15,7 +15,7 @@ from .permissions import groupAttendApplyPermissions, groupConfirmMemberPermissi
 
 class createAndShowGroupInfo(APIView):
 
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
         serializer = GroupBaseSerializer(Group.objects.all(), many=True)
