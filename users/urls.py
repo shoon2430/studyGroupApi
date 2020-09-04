@@ -15,7 +15,7 @@ from rest_framework_jwt.views import (
 app_name = "users"
 
 urlpatterns = [
-    path("jwt-auth/", obtain_jwt_token),  # JWT 토큰 획득
+    path("jwt-auth/", obtain_jwt_token, name="get-token"),  # JWT 토큰 획득
     path("jwt-auth/refresh/", refresh_jwt_token),  # JWT 토큰 갱신
     path("jwt-auth/verify/", verify_jwt_token),  # JWT 토큰 확인
     path("users/", showUserApi.as_view(), name="list"),

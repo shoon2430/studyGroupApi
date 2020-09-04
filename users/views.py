@@ -12,7 +12,7 @@ from .serializers import (
     UserUpdateSerializer,
 )
 from .models import User
-from core.decode_jwt import decode_jwt
+from core.decode_jwt import request_decode_jwt
 
 
 class showUserApi(APIView):
@@ -20,8 +20,8 @@ class showUserApi(APIView):
     유저 리스트 조회 API
     """
 
-    # permission_classes = []
-    # authentication_classes = ()
+    permission_classes = []
+    authentication_classes = ()
 
     def get(self, request):
         serializer = UserBaseSerializer(User.objects.all(), many=True)
@@ -39,15 +39,8 @@ class createUserApi(APIView):
     def post(self, request):
         serializer = UserCreateSerializer(data=request.data)
         if serializer.is_valid():
-
-            if (
-                User.objects.filter(
-                    username=serializer.validated_data["username"]
-                ).first()
-                is None
-            ):
-                serializer.save()
-                return Response(serializer.data, status=201)
+            serializer.save()
+            return Response(serializer.data, status=201)
 
         return Response(serializer.errors, status=400)
 
@@ -57,12 +50,10 @@ class updateUserApi(APIView):
     회원정보 수정 API
     """
 
-    def get_object(self, username):
-        return get_object_or_404(User, username=username)
-
     def patch(self, request, username):
-        username = decode_jwt(request)["username"]
-        user = self.get_object(username)
+        username = request_decode_jwt(request)["username"]
+        user = get_object_or_404(User, username=username)
+
         serializer = UserUpdateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.update(instance=user, validated_data=request.data)
@@ -82,7 +73,7 @@ class deleteUserApi(APIView):
 
     def delete(self, request):
 
-        username = decode_jwt(request)["username"]
+        username = request_decode_jwt(request)["username"]
         try:
             user = get_object_or_404(User, username=username)
             user.is_active = False
