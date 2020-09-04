@@ -1,5 +1,6 @@
 import json
-import jwt
+from django.shortcuts import get_object_or_404
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -11,6 +12,7 @@ from .serializers import (
     UserUpdateSerializer,
 )
 from .models import User
+from core.decode_jwt import request_decode_jwt
 
 
 class showUserApi(APIView):
@@ -18,8 +20,8 @@ class showUserApi(APIView):
     유저 리스트 조회 API
     """
 
-    # permission_classes = []
-    # authentication_classes = ()
+    permission_classes = []
+    authentication_classes = ()
 
     def get(self, request):
         serializer = UserBaseSerializer(User.objects.all(), many=True)
@@ -31,18 +33,14 @@ class createUserApi(APIView):
     회원가입 API
     """
 
+    permission_classes = []
+    authentication_classes = ()
+
     def post(self, request):
         serializer = UserCreateSerializer(data=request.data)
         if serializer.is_valid():
-
-            if (
-                User.objects.filter(
-                    username=serializer.validated_data["username"]
-                ).first()
-                is None
-            ):
-                serializer.save()
-                return Response(serializer.data, status=201)
+            serializer.save()
+            return Response(serializer.data, status=201)
 
         return Response(serializer.errors, status=400)
 
@@ -52,18 +50,12 @@ class updateUserApi(APIView):
     회원정보 수정 API
     """
 
-    # permission_classes = [IsAuthenticated]
-
-    # authentication_classes = (JSONWebTokenAuthentication,)
-
-    def get_object(self, username):
-        return User.objects.get(username=username)
-
     def patch(self, request, username):
-        user = self.get_object(username)
-        serializer = UserUpdateSerializer(instance=user, data=request.data)
-        if serializer.is_valid():
+        username = request_decode_jwt(request)["username"]
+        user = get_object_or_404(User, username=username)
 
+        serializer = UserUpdateSerializer(data=request.data)
+        if serializer.is_valid():
             serializer.update(instance=user, validated_data=request.data)
             return Response(serializer.data, status=201)
 
@@ -79,7 +71,17 @@ class deleteUserApi(APIView):
         JSONWebTokenAuthentication,
     ]
 
-    pass
+    def delete(self, request):
+
+        username = request_decode_jwt(request)["username"]
+        try:
+            user = get_object_or_404(User, username=username)
+            user.is_active = False
+            user.save()
+            return Response("회원탈퇴에 성공", status=200)
+        except User.DoesNotExist:
+            message = "존재하지 않는 유저입니다."
+            return Response(message, status=200)
 
 
 class userLoginAPI(APIView):
@@ -87,6 +89,7 @@ class userLoginAPI(APIView):
     로그인 API
     """
 
+    # 로그인 요청은 따로 인증이 필요없다고 판단
     permission_classes = []
     authentication_classes = ()
 
@@ -96,15 +99,3 @@ class userLoginAPI(APIView):
             return Response(serializer.data, status=201)
 
         return Response(serializer.errors, status=400)
-
-
-class userLogoutAPI(APIView):
-    """
-    로그아웃
-    """
-
-    authentication_classes = [
-        JSONWebTokenAuthentication,
-    ]
-
-    pass

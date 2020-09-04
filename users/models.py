@@ -8,7 +8,7 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to="avatars", null=True, blank=True)
     nickname = models.CharField(blank=False, max_length=100)
     phone = models.CharField(blank=False, default="010-0000-0000", max_length=13)
-    introduce = models.TextField(max_length=300, blank=True)
+    introduce = models.TextField(max_length=300, blank=True, default=None)
 
     def __str__(self):
         return self.username
