@@ -27,27 +27,20 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["web", "*"]
 
-
-DJANGO_APPS = [
+INSTALLED_APPS = [
+    "rest_framework",
+    "rest_framework.authtoken",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-]
-
-PROJECT_APPS = [
     "core.apps.CoreConfig",
     "users.apps.UsersConfig",
     "groups.apps.GroupsConfig",
     "todos.apps.TodosConfig",
 ]
-
-
-THIRD_PARTY_APPS = ["rest_framework"]
-
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -147,3 +140,30 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 # 기본 장고 USER 커스텀
 # 장고에서 기본적으로 제공해주는 User를 커스텀
 AUTH_USER_MODEL = "users.User"
+
+# settings.py
+REST_USE_JWT = True
+
+
+# jwt토큰 세팅
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
+        # "rest_framework.authentication.SessionAuthentication",
+        # "rest_framework.authentication.BasicAuthentication",
+    ),
+}
+
+
+import datetime
+
+JWT_AUTH = {
+    "JWT_ALLOW_REFRESH": True,
+    "JWT_SECRET_KEY": SECRET_KEY,
+    "JWT_ALGORITHM": "HS256",
+    "JWT_EXPIRATION_DELTA": datetime.timedelta(seconds=300),
+    "JWT_REFRESH_EXPIRATION_DELTA": datetime.timedelta(days=7),
+}
+
+CORS_ORIGIN_WHITELIST = "localhost:3000/"

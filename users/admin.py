@@ -11,16 +11,25 @@ class UserAdmin(admin.ModelAdmin):
     COSTOM_FIELDS = (
         (
             ("CostomFields"),
-            {"fields": ("username", "password", "avatar", "name", "email", "phone")},
+            {
+                "fields": (
+                    "username",
+                    "password",
+                    "avatar",
+                    "nickname",
+                    "email",
+                    "phone",
+                )
+            },
         ),
         (("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
 
-    fieldsets = COSTOM_FIELDS
+    fieldsets = USERADMIN_FIELDS
 
     list_display = (
         "username",
-        "name",
+        "nickname",
         "email",
         "date_joined",
     )
