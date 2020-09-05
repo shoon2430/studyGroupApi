@@ -22,6 +22,6 @@ urlpatterns = [
     path("signin/", createUserApi.as_view(), name="create"),
     path("login/", userLoginAPI.as_view(), name="login"),
     path("out-member/", deleteUserApi.as_view(), name="delete"),
-    path("user/<username>/modify/", updateUserApi.as_view(), name="modify"),
-    path("user/<username>/delete/", deleteUserApi.as_view(), name="delete"),
+    path("user/modify/", updateUserApi.as_view(), name="modify"),
+    path("user/delete/", deleteUserApi.as_view(), name="delete"),
 ]

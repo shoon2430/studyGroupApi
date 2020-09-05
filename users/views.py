@@ -12,7 +12,7 @@ from .serializers import (
     UserUpdateSerializer,
 )
 from .models import User
-from core.decode_jwt import request_decode_jwt
+from core.decode_jwt import request_get_user
 
 
 class showUserApi(APIView):
@@ -50,10 +50,8 @@ class updateUserApi(APIView):
     회원정보 수정 API
     """
 
-    def patch(self, request, username):
-        username = request_decode_jwt(request)["username"]
-        user = get_object_or_404(User, username=username)
-
+    def patch(self, request):
+        user = request_get_user(request)
         serializer = UserUpdateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.update(instance=user, validated_data=request.data)
@@ -72,10 +70,8 @@ class deleteUserApi(APIView):
     ]
 
     def delete(self, request):
-
-        username = request_decode_jwt(request)["username"]
         try:
-            user = get_object_or_404(User, username=username)
+            user = request_get_user(request)
             user.is_active = False
             user.save()
             return Response("회원탈퇴에 성공", status=200)
