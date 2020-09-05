@@ -1,6 +1,8 @@
 import jwt
 from django.conf import settings
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+
 from rest_framework.response import Response
 
 from users.models import User
@@ -19,3 +21,10 @@ def request_decode_jwt(request):
 
     encode_token = request.headers["Authorization"].split(" ")[1]
     return decode_jwt(encode_token)
+
+
+def request_get_user(request):
+    try:
+        return get_object_or_404(User, username=request_decode_jwt(request)["username"])
+    except User.DoesNotExist:
+        return Response({"error_code": "INVALID_TOKEN"}, status=401)
