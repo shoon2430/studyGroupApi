@@ -31,7 +31,6 @@ class ModelTestCase(APITestCase):
         self.assertEqual(User.objects.count(), 1)
 
         # 토큰추출
-
         url = reverse("users:get-token")
         data = {"username": "local", "password": "1234"}
         response = self.client.post(url, data, format="json")
@@ -42,18 +41,20 @@ class ModelTestCase(APITestCase):
     # 유저 로그인 테스트
     def test_login_user(self):
 
-        data = {"username": "local", "password": "1234"}
         url = reverse("users:login")
+        data = {"username": "local", "password": "1234"}
 
+        # 로그인 요청
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        token = response.data["token"]
 
+        # 로그인 요청시 발급되는 토큰의 유저정보와 로그인요청한 유저의 정보가 같은지 확인
+        token = response.data["token"]
         self.assertEqual(decode_jwt(token)["username"], "local")
 
     # 유저 회원정보 수정
     def test_modify_user(self):
-        url = reverse("users:modify", args=[self.user["username"]])
+        url = reverse("users:modify")
         data = {"nickname": "TEST", "email": "", "phone": "", "introduce": ""}
 
         # 토큰 세팅
@@ -66,5 +67,14 @@ class ModelTestCase(APITestCase):
         self.assertEqual(user.nickname, "TEST")
 
     # 유저 회원탈퇴
-    # def test_out_meneber_user(self):
-    #     pass
+    def test_out_meneber_user(self):
+        url = reverse("users:delete")
+        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {self.jwt_token}")
+
+        # 회원탈퇴 요청
+        response = self.client.delete(url, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # 변경된 유저 상태값 확인
+        user = User.objects.get(pk=decode_jwt(self.jwt_token)["user_id"])
+        self.assertEqual(user.is_active, False)

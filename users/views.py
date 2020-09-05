@@ -50,7 +50,7 @@ class updateUserApi(APIView):
     회원정보 수정 API
     """
 
-    def patch(self, request, username):
+    def patch(self, request):
         username = request_decode_jwt(request)["username"]
         user = get_object_or_404(User, username=username)
 
