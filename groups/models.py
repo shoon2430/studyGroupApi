@@ -7,8 +7,8 @@ from core.models import TimeStampModel
 class Group(TimeStampModel):
     photo = models.ImageField(blank=True, upload_to="groups")
     category = models.CharField(max_length=50)
-    title = models.CharField(max_length=300)
-    discription = models.TextField()
+    title = models.CharField(max_length=300, blank=True, null=True)
+    discription = models.TextField(blank=True, null=True)
     leader = models.ForeignKey(
         "users.User", related_name="leader", on_delete=models.CASCADE
     )

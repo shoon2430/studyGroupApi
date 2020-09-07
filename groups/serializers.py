@@ -1,19 +1,17 @@
 from rest_framework import serializers
 from .models import Group
 from users.models import User
-from users.serializers import UserBaseSerializer
+from users.serializers import UserBaseSerializer, userSimpleInfoSerializer
 
-
-# class GroupPhotoSerializer(serializers.ModelSerializer):
-#     class Meta:
-#     photo = serializers.ImageField(use_url=True)
+from todos.serializers import SubjectSimpleSerializer
 
 
 class GroupBaseSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(read_only=True)
     leader = UserBaseSerializer(read_only=True)
     time = serializers.IntegerField(read_only=True)
-    members = UserBaseSerializer(many=True, read_only=True)
-    attends = UserBaseSerializer(many=True, read_only=True)
+    members = userSimpleInfoSerializer(many=True, read_only=True)
+    attends = userSimpleInfoSerializer(many=True, read_only=True)
 
     def __init__(self, leader, *args, **kwargs):
         super(GroupBaseSerializer, self).__init__(*args, **kwargs)
@@ -22,6 +20,7 @@ class GroupBaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = (
+            "id",
             "category",
             "title",
             "discription",
@@ -41,21 +40,37 @@ class GroupBaseSerializer(serializers.ModelSerializer):
         return group
 
 
-# # 그룹 참여 Serializer
-# class attendToGroupSerializer(serializers.ModelSerializer):
-#     userId = serializers.CharField(required=False)
+# 그룹 상세 정보 조회
+class GroupInfoShowSerializer(serializers.ModelSerializer):
+    subjects = SubjectSimpleSerializer(many=True)
 
-#     def __init__(self, group, user, *args, **kwargs):
-#         super(attendToGroupSerializer, self).__init__(*args, **kwargs)
-#         self.group = group
+    class Meta:
+        model = Group
+        fields = (
+            "id",
+            "category",
+            "title",
+            "discription",
+            "leader",
+            "time",
+            "members",
+            "attends",
+            "subjects",
+        )
 
-#     class Meta:
-#         model = Group
-#         fields = ("userId",)
 
-#     def create(self, validated_data):
-#         self.group.attends.add(user)
-#         return self.group
+# 그룹 상세 정보 수정
+class GroupInfoUpdateSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(allow_blank=True)
+    discription = serializers.CharField(allow_blank=True)
+
+    class Meta:
+        model = Group
+        fields = (
+            "category",
+            "title",
+            "discription",
+        )
 
 
 # 그룹 참가 승인
