@@ -9,6 +9,13 @@ jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 from .models import User
 
+
+class userSimpleInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "nickname")
+
+
 # 기본 유저정보 조회 Serializer
 class UserBaseSerializer(serializers.ModelSerializer):
     class Meta:

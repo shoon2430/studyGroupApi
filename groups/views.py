@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -6,6 +7,8 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .serializers import (
     GroupBaseSerializer,
     confirmToGroupSerializer,
+    GroupInfoShowSerializer,
+    GroupInfoUpdateSerializer,
 )
 
 from .models import Group
@@ -14,8 +17,12 @@ from core.decode_jwt import request_get_user
 
 
 class createAndShowGroupInfo(APIView):
+    """
+    그룹 전체 조회 및 그룹 생성
+    """
 
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = []
+    authentication_classes = ()
 
     def get(self, request):
         serializer = GroupBaseSerializer(Group.objects.all(), many=True)
@@ -28,6 +35,39 @@ class createAndShowGroupInfo(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)
+
+
+class groupDetailApi(APIView):
+    """
+    그룹 상세 정보 조회
+    그룹에 해당하는 subject들을 보여준다
+
+    그룹 상세정보 수정 및 삭제
+    """
+
+    permission_classes = []
+    authentication_classes = ()
+
+    def get_object(self, pk):
+        return get_object_or_404(Group, pk=pk)
+
+    def get(self, request, pk):
+        serializer = GroupInfoShowSerializer(self.get_object(pk))
+        return Response(serializer.data)
+
+    def patch(self, request, pk):
+        group = self.get_object(pk)
+        serializer = GroupInfoUpdateSerializer(group, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+
+        return Response(serializer.errors, status=400)
+
+    def delete(self, request, pk):
+        group = self.get_object(pk)
+        group.delete()
+        return Response("그룹이 삭제되었습니다.", status=201)
 
 
 class attendApplyToGroup(APIView):
@@ -59,7 +99,7 @@ class confirmMemberToGroup(APIView):
     def get_object(self, pk):
         return Group.objects.get(pk=pk)
 
-    def put(self, request, pk):
+    def patch(self, request, pk):
         groupObj = self.get_object(pk)
         serializer = confirmToGroupSerializer(group=groupObj, data=request.data)
         if serializer.is_valid():
