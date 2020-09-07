@@ -5,6 +5,7 @@ from core.models import TimeStampModel
 class Subject(TimeStampModel):
     group_id = models.ForeignKey(
         "groups.Group",
+        related_name="subjects",
         blank=False,
         null=False,
         on_delete=models.CASCADE,
