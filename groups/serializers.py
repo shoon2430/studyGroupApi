@@ -37,6 +37,10 @@ class GroupBaseSerializer(serializers.ModelSerializer):
             discription=validated_data["discription"],
             leader=self.leader,
         )
+        group.members.add(self.leader)
+        group.save()
+        self.leader.attendGroups.add(group)
+        self.leader.save()
         return group
 
 
@@ -85,9 +89,31 @@ class confirmToGroupSerializer(serializers.ModelSerializer):
         model = Group
         fields = ("userId",)
 
-    def create(self, validated_data):
+    def validate(self, data):
+        """
+        member에 이미 존재하는지 확인
+        """
+        username = data.get("userId", None)
+        try:
+            user = User.objects.get(username=username)
+            if user not in self.group.attends.all():
+                raise serializers.ValidationError("참여목록에 존재하지 않습니다.")
+            elif user in self.group.members.all():
+                raise serializers.ValidationError("이미 그룹에 참여중인 유저입니다.")
 
+            return data
+        except User.DoesNotExist:
+            raise serializers.ValidationError("존재하지 않는 유저입니다.")
+
+    def create(self, validated_data):
         user = User.objects.get(username=validated_data["userId"])
+
         self.group.attends.remove(user)
         self.group.members.add(user)
+
+        # 유저 정보에 그룹 정보 추가
+        user.attendGroups.add(self.group)
+        self.group.save()
+        user.save()
+
         return self.group

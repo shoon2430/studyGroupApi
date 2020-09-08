@@ -16,7 +16,7 @@ from .permissions import groupConfirmMemberPermissions
 from core.decode_jwt import request_get_user
 
 
-class createAndShowGroupInfo(APIView):
+class createAndShowGroupInfoApi(APIView):
     """
     그룹 전체 조회 및 그룹 생성
     """
@@ -70,7 +70,23 @@ class groupDetailApi(APIView):
         return Response("그룹이 삭제되었습니다.", status=201)
 
 
-class attendApplyToGroup(APIView):
+class myGroupsDetailApi(APIView):
+    """
+    내가 속한 그룹 정보
+    """
+
+    permission_classes = []
+    authentication_classes = ()
+
+    def get(self, request):
+        user = request_get_user(request)
+        group = Group.objects.filter()
+
+        serializer = GroupInfoShowSerializer(self.get_object(pk))
+        return Response(serializer.data)
+
+
+class attendApplyToGroupApi(APIView):
     """
     그룹 참여 신청
     그룹 참여시 참가 신청 목록에 추가된다.
@@ -83,12 +99,19 @@ class attendApplyToGroup(APIView):
 
         group = self.get_object(pk)
         user = request_get_user(request)
+
+        # 참가신청목록과, 그룹멤버에 포함되지 않아야 신청가능하다.
+        if user in group.attends.all():
+            return Response("이미 참가신청을 하였습니다.", status=405)
+        elif user in group.members.all():
+            return Response("이미 그룹에 참여중입니다.", status=405)
+
         group.attends.add(user)
         group.save()
-        return Response("그룹에 참여하였습니다.", status=200)
+        return Response("참가신청 되었습니다.", status=200)
 
 
-class confirmMemberToGroup(APIView):
+class confirmMemberToGroupApi(APIView):
     """
     그룹 참가 승인
     그룹 참여시 참가 신청 목록에서 제거 후, 멤버로 등록한다.
@@ -105,3 +128,31 @@ class confirmMemberToGroup(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=204)
+        else:
+            return Response("이미 그룹에 참여중입니다.", status=405)
+
+
+class outApplyToGroupApi(APIView):
+    """
+    그룹 탈퇴
+    """
+
+    def get_object(self, pk):
+        return Group.objects.get(pk=pk)
+
+    def delete(self, request, pk):
+
+        group = self.get_object(pk)
+        user = request_get_user(request)
+
+        # 참가신청목록과, 그룹멤버에 포함되지 않아야 신청가능하다.
+        if user in group.attends.all():
+            group.attends.remove(user)
+            group.save()
+            return Response("참가신청이 취소 되었습니다.", status=200)
+        elif user in group.members.all():
+            group.members.remove(user)
+            group.save()
+            return Response("그룹에서 탈퇴하였습니다.", status=200)
+        else:
+            return Response("해당 그룹에 속한 정보가 없습니다.", status=405)
