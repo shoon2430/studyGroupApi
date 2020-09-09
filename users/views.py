@@ -55,7 +55,7 @@ class updateUserApi(APIView):
         serializer = UserUpdateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.update(instance=user, validated_data=request.data)
-            return Response(serializer.data, status=201)
+            return Response(serializer.data, status=200)
 
         return Response(serializer.errors, status=400)
 
@@ -92,6 +92,6 @@ class userLoginAPI(APIView):
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
-            return Response(serializer.data, status=201)
+            return Response(serializer.data, status=200)
 
         return Response(serializer.errors, status=400)

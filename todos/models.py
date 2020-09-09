@@ -34,6 +34,7 @@ class Todo(TimeStampModel):
 
     subject_id = models.ForeignKey(
         "todos.Subject",
+        related_name="todos",
         blank=False,
         null=False,
         on_delete=models.CASCADE,

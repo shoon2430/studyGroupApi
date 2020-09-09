@@ -1,17 +1,21 @@
 import uuid
 from django.urls import path
 from .views import (
-    createAndShowGroupInfo,
-    attendApplyToGroup,
-    confirmMemberToGroup,
+    createAndShowGroupInfoApi,
+    attendApplyToGroupApi,
+    outApplyToGroupApi,
+    confirmMemberToGroupApi,
     groupDetailApi,
 )
 
 app_name = "groups"
 
 urlpatterns = [
-    path("groups/", createAndShowGroupInfo.as_view(), name="groups"),
+    path("groups/", createAndShowGroupInfoApi.as_view(), name="groups"),
     path("groups/<uuid:pk>/", groupDetailApi.as_view(), name="info"),
-    path("groups/<uuid:pk>/attend/", attendApplyToGroup.as_view(), name="attend"),
-    path("groups/<uuid:pk>/confirm/", confirmMemberToGroup.as_view(), name="confirm"),
+    path("groups/<uuid:pk>/attend/", attendApplyToGroupApi.as_view(), name="attend"),
+    path("groups/<uuid:pk>/out/", outApplyToGroupApi.as_view(), name="out"),
+    path(
+        "groups/<uuid:pk>/confirm/", confirmMemberToGroupApi.as_view(), name="confirm"
+    ),
 ]
