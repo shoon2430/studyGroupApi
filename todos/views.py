@@ -9,9 +9,15 @@ from .serializers import (
     SubjectBaseSerializer,
     groupSubjectsSerializer,
     SubjectDetailSerializer,
+    todoSimpleSerializer,
+    todoDetailSerializer,
 )
 
-from .permissions import subjectDetailPermissions
+from .permissions import (
+    myGroupOnlyToSubjectPermissions,
+    myGroupOnlyToTodoPermissions,
+    todoDetailPermissions,
+)
 
 from .models import Subject, Todo
 from groups.models import Group
@@ -48,7 +54,7 @@ class subjectCreateApi(APIView):
 
 class subjectDetailApi(APIView):
     permission_classes = [
-        subjectDetailPermissions,
+        myGroupOnlyToSubjectPermissions,
     ]
 
     def patch(self, request, group_pk, subject_pk):
@@ -67,4 +73,44 @@ class subjectDetailApi(APIView):
     def delete(self, request, group_pk, subject_pk):
         subject = get_object_or_404(Subject, pk=subject_pk)
         subject.delete()
+        return Response("subject가 삭제되었습니다.", status=200)
+
+
+class todoCreateApi(APIView):
+    """
+    todo 생성
+    """
+
+    permission_classes = [
+        myGroupOnlyToTodoPermissions,
+    ]
+
+    def post(self, request, subject_pk):
+        serializer = todoSimpleSerializer(
+            subject=get_object_or_404(Subject, pk=subject_pk),
+            writer=request_get_user(request),
+            data=request.data,
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+
+
+class todoDetailApi(APIView):
+    permission_classes = [
+        todoDetailPermissions,
+    ]
+
+    def patch(self, request, subject_pk, todo_pk):
+
+        serializer = todoDetailSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.update(get_object_or_404(Todo, pk=todo_pk), serializer.data)
+            return Response(serializer.data, status=200)
+
+        return Response(serializer.errors, status=400)
+
+    def delete(self, request, subject_pk, todo_pk):
+        todo = get_object_or_404(Todo, pk=todo_pk)
+        todo.delete()
         return Response("subject가 삭제되었습니다.", status=200)
