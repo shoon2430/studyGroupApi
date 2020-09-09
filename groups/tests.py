@@ -9,96 +9,18 @@ from rest_framework import status
 from .models import Group
 from users.models import User
 
+from users.tests import UserTestCase
 
-class GroupCreateTestCase(APITestCase):
+
+class GroupTestCase(UserTestCase):
     def setUp(self):
-        self.user1 = {
-            "username": "local",
-            "email": "test@local.host",
-            "password": "1234",
-            "nickname": "hoon",
-            "phone": "",
-            "introduce": "",
-        }
-
-        response = self.client.post(reverse("users:create"), self.user1, format="json")
-
-        # 토큰추출
-        data = {
-            "username": self.user1["username"],
-            "password": self.user1["password"],
-        }
-        response = self.client.post(reverse("users:get-token"), data, format="json")
-        self.jwt_token = response.data["token"]
-
-    # 그룹장이 그룹을 생성한다.
-    def test_create_group(self):
-        # 그룹 생성테스트
-        url = reverse("groups:groups")
-        data = {
-            "category": "test",
-            "title": "localhostGroup",
-            "discription": "Hello my name ist local",
-        }
-
-        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {self.jwt_token}")
-        response = self.client.post(url, data, format="json")
-
-        group = json.loads(response.content)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        self.assertEqual(Group.objects.count(), 1)
-        self.assertEqual(group["category"], data["category"])
-        self.assertEqual(group["title"], data["title"])
-        self.assertEqual(group["discription"], data["discription"])
-
-
-class GroupTestCase(APITestCase):
-    def setUp(self):
+        super().setUp()
 
         self.group = {
             "category": "test",
             "title": "localhostGroup",
             "discription": "Hello my name ist local",
         }
-
-        self.user1 = {
-            "username": "local",
-            "email": "test@local.host",
-            "password": "1234",
-            "nickname": "hoon",
-            "phone": "",
-            "introduce": "",
-        }
-
-        self.user2 = {
-            "username": "host",
-            "email": "host@local.host",
-            "password": "1234",
-            "nickname": "shoon",
-            "phone": "",
-            "introduce": "",
-        }
-
-        # 초기화 동시에 유저 생성 테스트
-        url = reverse("users:create")
-        response = self.client.post(url, self.user1, format="json")
-        response = self.client.post(url, self.user2, format="json")
-
-        # 토큰추출
-        url = reverse("users:get-token")
-        data = {
-            "username": self.user1["username"],
-            "password": self.user1["password"],
-        }
-        response = self.client.post(url, data, format="json")
-        self.jwt_token_1 = response.data["token"]
-        data = {
-            "username": self.user2["username"],
-            "password": self.user2["password"],
-        }
-        response = self.client.post(url, data, format="json")
-        self.jwt_token_2 = response.data["token"]
 
         url = reverse("groups:groups")
         self.client.credentials(HTTP_AUTHORIZATION=f"JWT {self.jwt_token_1}")

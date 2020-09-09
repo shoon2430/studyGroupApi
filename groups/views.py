@@ -60,14 +60,14 @@ class groupDetailApi(APIView):
         serializer = GroupInfoUpdateSerializer(group, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=201)
+            return Response(serializer.data, status=200)
 
         return Response(serializer.errors, status=400)
 
     def delete(self, request, pk):
         group = self.get_object(pk)
         group.delete()
-        return Response("그룹이 삭제되었습니다.", status=201)
+        return Response("그룹이 삭제되었습니다.", status=200)
 
 
 class myGroupsDetailApi(APIView):
