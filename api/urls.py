@@ -20,6 +20,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("users.urls", namespace="account")),
     path("api/", include("groups.urls", namespace="groups")),
+    path("api/", include("todos.urls", namespace="todos")),
 ]
 
 from django.conf import settings
