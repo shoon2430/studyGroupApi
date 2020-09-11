@@ -3,28 +3,75 @@ from groups.models import Group
 from users.models import User
 from users.serializers import UserBaseSerializer
 from .models import Subject, Todo
+from users.models import User
 
 from users.serializers import userSimpleInfoSerializer
 
 
 class TodoSimpleSerializer(serializers.ModelSerializer):
+    todo_id = serializers.CharField(source="id")
+
     class Meta:
         model = Todo
-        fields = ("id", "time", "title", "writer", "progress")
+        fields = ("todo_id", "time", "title", "writer", "progress")
 
 
 class SubjectSimpleSerializer(serializers.ModelSerializer):
     todos = TodoSimpleSerializer(many=True)
+    subject_id = serializers.CharField(source="id")
 
     class Meta:
         model = Subject
-        fields = ("id", "time", "title", "writer", "todos")
+        fields = ("subject_id", "time", "title", "writer", "todos")
 
 
 class groupSubjectsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
         fields = ("id", "time", "title", "writer", "todos")
+
+
+class todosInnerUserSerializer(serializers.ModelSerializer):
+    user_id = serializers.CharField(source="id")
+
+    class Meta:
+        model = User
+        fields = (
+            "user_id",
+            "username",
+            "nickname",
+        )
+
+
+class subjectInnerTodoSerializer(serializers.ModelSerializer):
+    userList = serializers.SerializerMethodField("users_set")
+    todo_id = serializers.CharField(source="id")
+
+    class Meta:
+        model = Todo
+        fields = ("todo_id", "time", "title", "writer", "progress", "userList")
+
+    def users_set(self, todo):
+
+        queryset = User.objects.filter()
+        print(type(queryset))
+        serializer = todosInnerUserSerializer(instance=queryset, many=True)
+        return serializer.data
+
+
+class subjectAndTodosSerializer(serializers.ModelSerializer):
+    todoList = subjectInnerTodoSerializer(source="todos", many=True)
+    subject_id = serializers.CharField(source="id")
+
+    class Meta:
+        model = Subject
+        fields = (
+            "subject_id",
+            "time",
+            "title",
+            "writer",
+            "todoList",
+        )
 
 
 class SubjectBaseSerializer(serializers.ModelSerializer):
