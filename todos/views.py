@@ -20,8 +20,11 @@ from .permissions import (
 )
 
 from .models import Subject, Todo
+from users.models import User
 from groups.models import Group
 from core.decode_jwt import request_get_user
+
+from pprint import pprint
 
 
 class subjectCreateApi(APIView):
@@ -53,9 +56,18 @@ class subjectCreateApi(APIView):
 
 
 class subjectDetailApi(APIView):
+    """
+    Subject 상세 정보 보기
+    """
+
     permission_classes = [
         myGroupOnlyToSubjectPermissions,
     ]
+
+    def get(self, request, group_pk, subject_pk):
+        subject = get_object_or_404(Subject, pk=subject_pk)
+        serializer = SubjectSimpleSerializer(subject)
+        return Response(serializer.data)
 
     def patch(self, request, group_pk, subject_pk):
         user = request_get_user(request)

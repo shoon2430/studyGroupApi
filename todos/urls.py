@@ -1,6 +1,11 @@
 import uuid
 from django.urls import path
-from .views import subjectCreateApi, subjectDetailApi, todoCreateApi, todoDetailApi
+from .views import (
+    subjectCreateApi,
+    subjectDetailApi,
+    todoCreateApi,
+    todoDetailApi,
+)
 
 app_name = "todos"
 

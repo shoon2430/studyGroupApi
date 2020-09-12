@@ -46,7 +46,9 @@ class GroupBaseSerializer(serializers.ModelSerializer):
 
 # 그룹 상세 정보 조회
 class GroupInfoShowSerializer(serializers.ModelSerializer):
-    subjects = SubjectSimpleSerializer(many=True)
+    subjectList = SubjectSimpleSerializer(source="group", many=True)
+    members = userSimpleInfoSerializer(many=True)
+    attends = userSimpleInfoSerializer(many=True)
 
     class Meta:
         model = Group
@@ -59,7 +61,7 @@ class GroupInfoShowSerializer(serializers.ModelSerializer):
             "time",
             "members",
             "attends",
-            "subjects",
+            "subjectList",
         )
 
 

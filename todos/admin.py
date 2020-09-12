@@ -1,10 +1,9 @@
 from django.contrib import admin
-from .models import Subject, Todo
+from .models import Subject, Todo, TodoGroup
 
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
-
     COSTOM_FIELDS = (
         (
             ("SubjectInfo"),
@@ -21,7 +20,34 @@ class SubjectAdmin(admin.ModelAdmin):
 
     fieldsets = COSTOM_FIELDS
 
-    list_display = ("group_id", "title", "writer", "time")
+    list_display = ("title", "writer", "time")
+
+
+@admin.register(TodoGroup)
+class TodoGroupAdmin(admin.ModelAdmin):
+    COSTOM_FIELDS = (
+        (
+            ("TodoGroupInfo"),
+            {
+                "fields": (
+                    "subject_id",
+                    "time",
+                    "title",
+                    "progress",
+                    "leader",
+                    "members",
+                )
+            },
+        ),
+    )
+
+    fieldsets = COSTOM_FIELDS
+
+    list_display = (
+        "title",
+        "leader",
+        "time",
+    )
 
 
 @admin.register(Todo)
@@ -32,7 +58,7 @@ class TodoAdmin(admin.ModelAdmin):
             ("TodoInfo"),
             {
                 "fields": (
-                    "subject_id",
+                    "todoGroup_id",
                     "time",
                     "title",
                     "writer",
@@ -43,4 +69,4 @@ class TodoAdmin(admin.ModelAdmin):
 
     fieldsets = COSTOM_FIELDS
 
-    list_display = ("subject_id", "title", "writer", "time")
+    list_display = ("title", "writer", "time")
