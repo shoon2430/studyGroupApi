@@ -3,7 +3,7 @@ from core.models import TimeStampModel
 
 
 class Subject(TimeStampModel):
-    master = models.ForeignKey(
+    group_id = models.ForeignKey(
         "groups.Group", related_name="group", on_delete=models.CASCADE
     )
     time = models.IntegerField(default=1)
@@ -28,7 +28,7 @@ class TodoGroup(TimeStampModel):
         (PROGRESS_COMPLETED, "Completed"),
     ]
 
-    master = models.ForeignKey(
+    subject_id = models.ForeignKey(
         "Subject", related_name="subject", on_delete=models.CASCADE
     )
     time = models.IntegerField(default=1)
@@ -57,7 +57,7 @@ class Todo(TimeStampModel):
         (PROGRESS_COMPLETED, "Completed"),
     ]
 
-    master = models.ForeignKey(
+    todoGroup_id = models.ForeignKey(
         "TodoGroup", related_name="todo_group", on_delete=models.CASCADE
     )
     time = models.IntegerField(default=1)

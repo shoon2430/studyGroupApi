@@ -11,7 +11,6 @@ from .serializers import (
     SubjectDetailSerializer,
     todoSimpleSerializer,
     todoDetailSerializer,
-    subjectAndTodosSerializer,
 )
 
 from .permissions import (
@@ -25,24 +24,7 @@ from users.models import User
 from groups.models import Group
 from core.decode_jwt import request_get_user
 
-
 from pprint import pprint
-
-
-class subjectInnerTodosListApi(APIView):
-    permission_classes = []
-    authentication_classes = ()
-
-    def get_object(self, group_pk):
-        group = get_object_or_404(Group, pk=group_pk)
-        return Subject.objects.filter(group_id=group)
-
-    def get(self, request, group_pk):
-        # 유저 전체리스트
-        user = User.objects.all()
-        subjects = self.get_object(group_pk)
-        serializer = subjectAndTodosSerializer(subjects, many=True)
-        return Response(serializer.data)
 
 
 class subjectCreateApi(APIView):
@@ -74,9 +56,18 @@ class subjectCreateApi(APIView):
 
 
 class subjectDetailApi(APIView):
+    """
+    Subject 상세 정보 보기
+    """
+
     permission_classes = [
         myGroupOnlyToSubjectPermissions,
     ]
+
+    def get(self, request, group_pk, subject_pk):
+        subject = get_object_or_404(Subject, pk=subject_pk)
+        serializer = SubjectSimpleSerializer(subject)
+        return Response(serializer.data)
 
     def patch(self, request, group_pk, subject_pk):
         user = request_get_user(request)

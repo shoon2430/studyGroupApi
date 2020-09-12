@@ -5,7 +5,6 @@ from .views import (
     subjectDetailApi,
     todoCreateApi,
     todoDetailApi,
-    subjectInnerTodosListApi,
 )
 
 app_name = "todos"
@@ -19,9 +18,6 @@ app_name = "todos"
 
 
 urlpatterns = [
-    path(
-        "groups/<uuid:group_pk>/test/", subjectInnerTodosListApi.as_view(), name="test"
-    ),
     path(
         "groups/<uuid:group_pk>/subjects/", subjectCreateApi.as_view(), name="subjects"
     ),
