@@ -70,20 +70,20 @@ class groupDetailApi(APIView):
         return Response("그룹이 삭제되었습니다.", status=200)
 
 
-class myGroupsDetailApi(APIView):
-    """
-    내가 속한 그룹 정보
-    """
+# class myGroupsDetailApi(APIView):
+#     """
+#     내가 속한 그룹 정보
+#     """
 
-    permission_classes = []
-    authentication_classes = ()
+#     permission_classes = []
+#     authentication_classes = ()
 
-    def get(self, request):
-        user = request_get_user(request)
-        group = Group.objects.filter()
+#     def get(self, request):
+#         user = request_get_user(request)
+#         group = Group.objects.filter()
 
-        serializer = GroupInfoShowSerializer(self.get_object(pk))
-        return Response(serializer.data)
+#         serializer = GroupInfoShowSerializer(self.get_object(pk))
+#         return Response(serializer.data)
 
 
 class attendApplyToGroupApi(APIView):
