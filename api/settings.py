@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "4#-vsx$q97i(9l^qffywae9wpqlcbh0hjgr^lgpp(nkbtkh)b5"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["web", "*"]
+ALLOWED_HOSTS = ["web"]
 
 INSTALLED_APPS = [
     "rest_framework",
@@ -131,6 +131,7 @@ USE_TZ = True
 
 # STATIC파일 경로 설정
 STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # MEDIA파일 경로 설정
 MEDIA_URL = "/media/"  # 항상 / 로 끝나도록 설정
@@ -158,12 +159,16 @@ REST_FRAMEWORK = {
 
 import datetime
 
+token_maintain_time = (
+    datetime.timedelta(days=1) if DEBUG else datetime.timedelta(seconds=300)
+)
+
 JWT_AUTH = {
     "JWT_ALLOW_REFRESH": True,
     "JWT_SECRET_KEY": SECRET_KEY,
     "JWT_ALGORITHM": "HS256",
-    "JWT_EXPIRATION_DELTA": datetime.timedelta(seconds=300),
+    "JWT_EXPIRATION_DELTA": token_maintain_time,
     "JWT_REFRESH_EXPIRATION_DELTA": datetime.timedelta(days=7),
 }
 
-CORS_ORIGIN_WHITELIST = "localhost:3000/"
+# CORS_ORIGIN_WHITELIST = "localhost:3000/"
