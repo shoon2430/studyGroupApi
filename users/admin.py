@@ -17,6 +17,7 @@ class UserAdmin(admin.ModelAdmin):
                     "nickname",
                     "email",
                     "phone",
+                    "attendGroups",
                 )
             },
         ),

@@ -45,7 +45,7 @@ class createUserApi(APIView):
         return Response(serializer.errors, status=400)
 
 
-class updateUserApi(APIView):
+class userDetailApi(APIView):
     """
     회원정보 수정 API
     """
