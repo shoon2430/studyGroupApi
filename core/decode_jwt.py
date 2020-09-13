@@ -25,6 +25,12 @@ def request_decode_jwt(request):
 
 def request_get_user(request):
     try:
+        request_user_data = request_decode_jwt(request)
+        if hasattr(request_user_data, "status_code"):
+            if request_user_data.status_code != 200:
+                return Response({"error_code": "AUTHORIZATION_NOT_FIND"}, status=401)
+
         return get_object_or_404(User, username=request_decode_jwt(request)["username"])
+
     except User.DoesNotExist:
         return Response({"error_code": "INVALID_TOKEN"}, status=401)

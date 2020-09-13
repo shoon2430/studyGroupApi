@@ -10,9 +10,12 @@
 # `Pipfile.lock` and then regenerate `requirements*.txt`.
 ################################################################################
 
+django-allauth
 django-dotenv
+django-rest-auth
 django==3.0.4
 djangorestframework
+djangorestframework-jwt
 gunicorn==20.0.4
 pillow
 pipenv-to-requirements
