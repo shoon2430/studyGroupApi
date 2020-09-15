@@ -6,7 +6,7 @@ from .views import (
     userDetailApi,
     deleteUserApi,
 )
-from .user_management_views import userInnerGroupsApi
+from .user_management_views import userInnerGroupsApi, userInnerTodosApi
 
 from rest_framework_jwt.views import (
     obtain_jwt_token,
@@ -31,5 +31,5 @@ urlpatterns = [
     # 내가속한 그룹조회
     path("user/groups", userInnerGroupsApi.as_view(), name="user-groups"),
     # 내가 해야할 todoList조회
-    path("user/todos", showUserApi.as_view(), name="user-todos"),
+    path("user/todos", userInnerTodosApi.as_view(), name="user-todos"),
 ]
