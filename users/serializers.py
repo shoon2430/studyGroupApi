@@ -13,7 +13,10 @@ from .models import User
 class userSimpleInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "nickname")
+        fields = (
+            "id",
+            "nickname",
+        )
 
 
 # 기본 유저정보 조회 Serializer
@@ -29,6 +32,7 @@ class UserBaseSerializer(serializers.ModelSerializer):
             "email",
             "introduce",
             "attendGroups",
+            "date_joined",
         )
         extra_kwargs = {
             # "password": {"write_only": True},

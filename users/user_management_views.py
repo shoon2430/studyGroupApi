@@ -58,7 +58,4 @@ class userInnerTodosApi(APIView):
             devices.append(groupAndTodoDevice(group, todos))
 
         serializer = DeviceSerializer(devices, many=True)
-        if serializer.is_valid():
-            return Response(serializer.data)
-        else:
-            return Response(status=500)
+        return Response(serializer.data)

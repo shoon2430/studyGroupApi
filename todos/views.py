@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,6 +10,8 @@ from .serializers import (
     SubjectBaseSerializer,
     groupSubjectsSerializer,
     SubjectDetailSerializer,
+    todoGroupSimpleSerializer,
+    todoGroupDetailSerializer,
     todoSimpleSerializer,
     todoDetailSerializer,
 )
@@ -19,7 +22,7 @@ from .permissions import (
     todoDetailPermissions,
 )
 
-from .models import Subject, Todo
+from .models import Subject, Todo, TodoGroup
 from users.models import User
 from groups.models import Group
 from core.decode_jwt import request_get_user
@@ -88,9 +91,9 @@ class subjectDetailApi(APIView):
         return Response("subject가 삭제되었습니다.", status=200)
 
 
-class todoCreateApi(APIView):
+class todoGroupCreateApi(APIView):
     """
-    todo 생성
+    todoGroup 생성
     """
 
     permission_classes = [
@@ -98,7 +101,7 @@ class todoCreateApi(APIView):
     ]
 
     def post(self, request, subject_pk):
-        serializer = todoSimpleSerializer(
+        serializer = todoGroupSimpleSerializer(
             subject=get_object_or_404(Subject, pk=subject_pk),
             writer=request_get_user(request),
             data=request.data,
@@ -108,21 +111,57 @@ class todoCreateApi(APIView):
             return Response(serializer.data, status=201)
 
 
-class todoDetailApi(APIView):
-    permission_classes = [
-        todoDetailPermissions,
-    ]
+class todoGroupDetailApi(APIView):
+    def patch(self, request, subject_pk, todoGoup_pk):
 
-    def patch(self, request, subject_pk, todo_pk):
-
-        serializer = todoDetailSerializer(data=request.data)
+        serializer = todoGroupDetailSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.update(get_object_or_404(Todo, pk=todo_pk), serializer.data)
+            serializer.update(
+                get_object_or_404(TodoGroup, pk=todoGoup_pk), serializer.data
+            )
             return Response(serializer.data, status=200)
 
         return Response(serializer.errors, status=400)
 
-    def delete(self, request, subject_pk, todo_pk):
-        todo = get_object_or_404(Todo, pk=todo_pk)
+    def delete(self, request, subject_pk, todoGoup_pk):
+        todo = get_object_or_404(TodoGroup, pk=todoGoup_pk)
         todo.delete()
         return Response("subject가 삭제되었습니다.", status=200)
+
+
+class addUserFromTodoGroupApi(APIView):
+    """
+    만들어진 todoGroup에 그룹원들 추가하기
+    """
+
+    def post(self, request, subject_pk, todoGoup_pk):
+        userIds = json.loads(request.body)["users"]
+
+        # 요청을 정상적으로 한 경우
+        if userIds:
+            users = User.objects.filter(username__in=userIds)
+            # 유효한 유저가 한명이라도 있을경우
+            if len(users) > 0:
+                todoGroup = get_object_or_404(TodoGroup, pk=todoGoup_pk)
+                for user in users:
+                    # todoGroup에 유저를 추가 후
+                    todoGroup.members.add(user)
+                    # 해당되는 유저의 todo를 생성해준다.
+                    Todo.objects.create(
+                        todoGroup_id=todoGroup,
+                        time=todoGroup.time,
+                        title=todoGroup.title,
+                        progress=todoGroup.progress,
+                        writer=user,
+                    )
+
+                todoGroup.save()
+                return Response("그룹원 추가 완료", status=200)
+            else:
+                return Response("유저 정보가 올바르지 않습니다.", status=400)
+        else:
+            return Response("해당 요청이 잘못되었습니다.", status=400)
+
+
+class todoDetailApi(APIView):
+    pass

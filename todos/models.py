@@ -33,7 +33,9 @@ class TodoGroup(TimeStampModel):
     )
     time = models.IntegerField(default=1)
     title = models.CharField(max_length=300)
-    progress = models.CharField(choices=PROGRESS_CHOICES, max_length=20)
+    progress = models.CharField(
+        choices=PROGRESS_CHOICES, default=PROGRESS_CREATE, max_length=20
+    )
     leader = models.ForeignKey(
         "users.User",
         related_name="todo_Leader",
