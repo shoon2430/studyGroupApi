@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 
 from rest_framework import status
 
-from .models import Subject, Todo
+from .models import Subject, Todo, TodoGroup
 from groups.models import Group
 from users.models import User
 
@@ -101,34 +101,29 @@ class SubejectCreateTestCase(userCreateSetUp):
         response = self.client.patch(url, data, format="json")
 
         url = reverse(
-            "todos:todos",
+            "todos:todoGroups",
             kwargs={"subject_pk": subject.pk},
         )
 
         data = {"title": "todoTest"}
-        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {self.jwt_token_2}")
+        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {self.jwt_token_1}")
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(json.loads(response.content)["title"], "todoTest")
 
-        # todo 수정 및 삭제
-        todo = Todo.objects.get()
-        data = {"title": "ChangeTodoTest", "progress": "CREATE"}
+        # TodoGroup에 그룹원 배정 테스트
+        todoGroup = TodoGroup.objects.get()
         url = reverse(
-            "todos:todo-detail",
-            kwargs={"subject_pk": subject.pk, "todo_pk": todo.pk},
+            "todos:todoGroup-addUser",
+            kwargs={"subject_pk": subject.pk, "todoGoup_pk": todoGroup.pk},
         )
-
-        # 작성자가 아닌 사람이 수정시
-        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {self.jwt_token_2}")
-        response = self.client.patch(url, data, format="json")
+        data = {"users": [self.user2["username"]]}
+        response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content)["title"], "ChangeTodoTest")
 
-        # 작성자가 삭제시
-        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {self.jwt_token_1}")
-        response = self.client.patch(url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(
-            json.loads(response.content)["detail"], "다른사람이 작성한 게시물은 수정할 수 었습니다."
-        )
+        # TodoGroup에 그룹원 추가시 해당그룬원의 todo도 생성되는지 테스트
+        todo = Todo.objects.get()
+        self.assertEqual(todoGroup.title, todo.title)
+        self.assertEqual(todoGroup.time, todo.time)
+        self.assertEqual(todoGroup.progress, todo.progress)
+        self.assertNotEqual(todoGroup.leader, todo.writer)

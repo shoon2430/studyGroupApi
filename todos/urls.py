@@ -3,7 +3,9 @@ from django.urls import path
 from .views import (
     subjectCreateApi,
     subjectDetailApi,
-    todoCreateApi,
+    todoGroupCreateApi,
+    todoGroupDetailApi,
+    addUserFromTodoGroupApi,
     todoDetailApi,
 )
 
@@ -27,12 +29,22 @@ urlpatterns = [
         name="subject-detail",
     ),
     path(
-        "subjects/<uuid:subject_pk>/todos/",
-        todoCreateApi.as_view(),
-        name="todos",
+        "subjects/<uuid:subject_pk>/todoGroups/",
+        todoGroupCreateApi.as_view(),
+        name="todoGroups",
     ),
     path(
-        "subjects/<uuid:subject_pk>/todos/<uuid:todo_pk>/",
+        "subjects/<uuid:subject_pk>/todoGroups/<uuid:todoGoup_pk>/",
+        todoGroupDetailApi.as_view(),
+        name="todoGroup-detail",
+    ),
+    path(
+        "subjects/<uuid:subject_pk>/todoGroups/<uuid:todoGoup_pk>/addUser/",
+        addUserFromTodoGroupApi.as_view(),
+        name="todoGroup-addUser",
+    ),
+    path(
+        "todoGroups/<uuid:todoGoup_pk>/todos/<uuid:todo_pk>/",
         todoDetailApi.as_view(),
         name="todo-detail",
     ),

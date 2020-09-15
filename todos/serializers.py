@@ -14,7 +14,7 @@ class todoAllSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Todo
-        fields = ("todo_id", "todoGroup_id", "time", "writer", "progress")
+        fields = ("todo_id", "todoGroup_id", "time", "writer", "progress", "created")
 
 
 class TodoGroupSimpleSerializer(serializers.ModelSerializer):
@@ -83,7 +83,7 @@ class subjectInnerTodoSerializer(serializers.ModelSerializer):
 
 class SubjectBaseSerializer(serializers.ModelSerializer):
 
-    group_id = serializers.UUIDField(source="group_id", read_only=True)
+    group_id = serializers.UUIDField(read_only=True)
     time = serializers.IntegerField(read_only=True)
     writer = userSimpleInfoSerializer(read_only=True)
 
@@ -119,41 +119,55 @@ class SubjectDetailSerializer(serializers.ModelSerializer):
         fields = ("title",)
 
 
-class todoSimpleSerializer(serializers.ModelSerializer):
+class todoGroupSimpleSerializer(serializers.ModelSerializer):
+    todoGroup_id = serializers.CharField(source="id", read_only=True)
     subject_id = serializers.UUIDField(read_only=True)
     time = serializers.IntegerField(read_only=True)
     progress = serializers.CharField(read_only=True)
-    writer = userSimpleInfoSerializer(read_only=True)
+    leader = userSimpleInfoSerializer(read_only=True)
+    members = userSimpleInfoSerializer(many=True, read_only=True)
 
     def __init__(self, subject, writer, *args, **kwargs):
-        super(todoSimpleSerializer, self).__init__(*args, **kwargs)
+        super(todoGroupSimpleSerializer, self).__init__(*args, **kwargs)
         self.subject = subject
         self.writer = writer
 
     class Meta:
-        model = Todo
+        model = TodoGroup
         fields = (
+            "todoGroup_id",
             "subject_id",
             "time",
             "title",
-            "writer",
             "progress",
+            "leader",
+            "members",
         )
 
     def create(self, validated_data):
-        todo = Todo.objects.create(
+        todoGroup = TodoGroup.objects.create(
             title=validated_data["title"],
             time=self.subject.time,
-            togoGroup_id=self.subject,
-            writer=self.writer,
+            subject_id=self.subject,
+            leader=self.subject.writer,  # subject를 만든사람 즉, 그룹장
         )
-        return todo
+        todoGroup.members.add(self.writer)
+        todoGroup.save()
+        return todoGroup
 
 
-class todoDetailSerializer(serializers.ModelSerializer):
+class todoGroupDetailSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Todo
+        model = TodoGroup
         fields = (
             "title",
             "progress",
         )
+
+
+class todoSimpleSerializer:
+    pass
+
+
+class todoDetailSerializer:
+    pass

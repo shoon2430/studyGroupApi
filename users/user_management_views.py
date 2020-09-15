@@ -10,8 +10,9 @@ from .models import User
 from todos.models import Subject, Todo, TodoGroup
 from core.decode_jwt import request_get_user
 
+from .user_management_serializers import myGroupInnerTodoSerializer, DeviceSerializer
 from groups.serializers import GroupBaseSerializer
-from .user_management_serializers import myGroupInnerTodoSerializer
+from todos.serializers import todoAllSerializer
 
 """
 자기 자신이 속한 그룹의 정보
@@ -31,16 +32,30 @@ class userInnerGroupsApi(APIView):
         return Response(serializer.data)
 
 
-# class userInnerTodosApi(APIView):
-#     """
-#     내가 해야할 투두 보기
-#     """
+# 그룹과 todo를 함께 담기위한 클래스
+class groupAndTodoDevice(object):
+    def __init__(self, group, todos):
+        self.group = group
+        self.todos = todos
 
-#     def get(self, request):
-#         #  유저를 받아온다 hoon
-#         user = request_get_user(request)
-#         # hoon이 속한 그룹을 가져온다
-#         group = user.attendGroups.all()
-#         # 이그룹에 해당하는 todo중 내가 해야하는 것만 보고싶다
-#         serializer = myGroupInnerTodoSerializer(group, user, many=True)
-#         return Response(serializer.data)
+
+class userInnerTodosApi(APIView):
+    """
+    내가 해야할 투두 보기
+    """
+
+    def get(self, request):
+        #  유저를 받아온다 hoon
+        user = request_get_user(request)
+        # hoon이 속한 그룹을 가져온다
+        groups = user.attendGroups.all()
+
+        devices = []
+        for group in groups:
+            subjects = Subject.objects.filter(group_id=group)
+            todoGroups = TodoGroup.objects.filter(subject_id__in=subjects)
+            todos = Todo.objects.filter(todoGroup_id__in=todoGroups, writer=user)
+            devices.append(groupAndTodoDevice(group, todos))
+
+        serializer = DeviceSerializer(devices, many=True)
+        return Response(serializer.data)
