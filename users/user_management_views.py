@@ -10,7 +10,11 @@ from .models import User
 from todos.models import Subject, Todo, TodoGroup
 from core.decode_jwt import request_get_user
 
-from .user_management_serializers import myGroupInnerTodoSerializer, DeviceSerializer
+from .user_management_serializers import (
+    myGroupInfoSerializer,
+    myGroupInnerTodoSerializer,
+    DeviceSerializer,
+)
 from groups.serializers import GroupBaseSerializer
 from todos.serializers import todoAllSerializer
 
@@ -28,7 +32,7 @@ class userInnerGroupsApi(APIView):
     def get(self, request):
         user = request_get_user(request)
         group = user.attendGroups.all()
-        serializer = GroupBaseSerializer(group, many=True)
+        serializer = myGroupInfoSerializer(group, many=True)
         return Response(serializer.data)
 
 
