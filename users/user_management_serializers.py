@@ -4,9 +4,24 @@ from django.contrib.auth import authenticate
 from rest_framework import serializers
 
 from todos.serializers import todoAllSerializer
+from todos.serializers import SubjectSimpleSerializer
 from .models import User
 from groups.models import Group
 from todos.models import Subject, TodoGroup, Todo
+
+# 그룹 상세 정보 조회
+class myGroupInfoSerializer(serializers.ModelSerializer):
+    subjectList = SubjectSimpleSerializer(source="group", many=True)
+
+    class Meta:
+        model = Group
+        fields = (
+            "id",
+            "title",
+            "category",
+            "discription",
+            "subjectList",
+        )
 
 
 class myGroupInnerTodoSerializer(serializers.ModelSerializer):

@@ -171,4 +171,4 @@ JWT_AUTH = {
     "JWT_REFRESH_EXPIRATION_DELTA": datetime.timedelta(days=7),
 }
 
-# CORS_ORIGIN_WHITELIST = "localhost:3000/"
+CORS_ORIGIN_WHITELIST = "localhost:3000/"
