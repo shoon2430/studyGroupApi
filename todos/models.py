@@ -8,6 +8,7 @@ class Subject(TimeStampModel):
     )
     time = models.IntegerField(default=1)
     title = models.CharField(max_length=300)
+    description = models.TextField(max_length=1000, blank=True, null=True)
     writer = models.ForeignKey(
         "users.User",
         related_name="subject_writer",
