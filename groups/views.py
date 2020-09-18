@@ -45,8 +45,7 @@ class groupDetailApi(APIView):
     그룹 상세정보 수정 및 삭제
     """
 
-    permission_classes = []
-    authentication_classes = ()
+    permission_classes = [groupConfirmMemberPermissions]
 
     def get_object(self, pk):
         return get_object_or_404(Group, pk=pk)
@@ -55,7 +54,7 @@ class groupDetailApi(APIView):
         serializer = GroupInfoShowSerializer(self.get_object(pk))
         return Response(serializer.data)
 
-    def patch(self, request, pk):
+    def put(self, request, pk):
         group = self.get_object(pk)
         serializer = GroupInfoUpdateSerializer(group, data=request.data)
         if serializer.is_valid():

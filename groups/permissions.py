@@ -22,6 +22,9 @@ class groupConfirmMemberPermissions(BasePermission):
 
     def has_permission(self, request, view):
         try:
+            if request.method == "GET":
+                return True
+
             isCheck = False
             user = request_get_user(request)
             if user:
