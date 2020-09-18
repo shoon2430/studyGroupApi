@@ -27,7 +27,7 @@ users_urlpatterns = [
     path("signin/", createUserApi.as_view(), name="create"),
     path("login/", userLoginAPI.as_view(), name="login"),
     path("out-member/", deleteUserApi.as_view(), name="delete"),
-    path("modify-info/", userDetailApi.as_view(), name="modify"),
+    path("users/info/", userDetailApi.as_view(), name="modify"),
 ]
 
 urlpatterns = users_urlpatterns + user_management_urlpatterns
