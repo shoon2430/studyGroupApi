@@ -6,11 +6,11 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .serializers import (
     GroupBaseSerializer,
-    confirmToGroupSerializer,
     GroupInfoShowSerializer,
     GroupInfoUpdateSerializer,
 )
 
+from users.models import User
 from .models import Group
 from .permissions import groupConfirmMemberPermissions
 from core.decode_jwt import request_get_user
@@ -70,22 +70,6 @@ class groupDetailApi(APIView):
         return Response("그룹이 삭제되었습니다.", status=200)
 
 
-# class myGroupsDetailApi(APIView):
-#     """
-#     내가 속한 그룹 정보
-#     """
-
-#     permission_classes = []
-#     authentication_classes = ()
-
-#     def get(self, request):
-#         user = request_get_user(request)
-#         group = Group.objects.filter()
-
-#         serializer = GroupInfoShowSerializer(self.get_object(pk))
-#         return Response(serializer.data)
-
-
 class attendApplyToGroupApi(APIView):
     """
     그룹 참여 신청
@@ -95,7 +79,7 @@ class attendApplyToGroupApi(APIView):
     def get_object(self, pk):
         return Group.objects.get(pk=pk)
 
-    def patch(self, request, pk):
+    def put(self, request, pk):
 
         group = self.get_object(pk)
         user = request_get_user(request)
@@ -122,14 +106,35 @@ class confirmMemberToGroupApi(APIView):
     def get_object(self, pk):
         return Group.objects.get(pk=pk)
 
-    def patch(self, request, pk):
-        groupObj = self.get_object(pk)
-        serializer = confirmToGroupSerializer(group=groupObj, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=204)
+    def put(self, request, pk):
+        group = self.get_object(pk)
+        print(group)
+        userIdList = request.data["userIdList"]
+
+        if userIdList:
+            userList = []
+            for userId in userIdList:
+                user = User.objects.get(pk=userId)
+
+                if user not in group.attends.all():
+                    return Response("참가신청을 하지 않은 유저입니다.", status=405)
+
+                if user in group.members.all():
+                    return Response("이미 그룹에 참여중인 유저입니다.", status=405)
+                userList.append(user)
+
+            for user in userList:
+                group.attends.remove(user)
+                group.members.add(user)
+
+                # 유저 정보에 그룹 정보 추가
+                user.attendGroups.add(group)
+                user.save()
+
+            group.save()
+            return Response("승인 되었습니다.", status=200)
         else:
-            return Response("이미 그룹에 참여중입니다.", status=405)
+            return Response("잘못된 요청입니다.", status=400)
 
 
 class outApplyToGroupApi(APIView):
@@ -152,6 +157,8 @@ class outApplyToGroupApi(APIView):
             return Response("참가신청이 취소 되었습니다.", status=200)
         elif user in group.members.all():
             group.members.remove(user)
+            user.attendGroups.remove(group)
+            user.save()
             group.save()
             return Response("그룹에서 탈퇴하였습니다.", status=200)
         else:
