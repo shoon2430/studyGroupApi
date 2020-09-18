@@ -101,6 +101,7 @@ class UserUpdateSerializer(serializers.Serializer):
 
 class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=64)
+    nickname = serializers.CharField(max_length=255, read_only=True)
     password = serializers.CharField(max_length=128, write_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
 
@@ -117,4 +118,8 @@ class UserLoginSerializer(serializers.Serializer):
 
         except User.DoesNotExist:
             raise serializers.ValidationError("존재하지 않는 유저입니다.")
-        return {"username": user.username, "token": jwt_token}
+        return {
+            "username": user.username,
+            "nickname": user.nickname,
+            "token": jwt_token,
+        }

@@ -50,6 +50,11 @@ class userDetailApi(APIView):
     회원정보 수정 API
     """
 
+    def get(self, request):
+        user = request_get_user(request)
+        serializer = UserBaseSerializer(user)
+        return Response(serializer.data)
+
     def patch(self, request):
         user = request_get_user(request)
         serializer = UserUpdateSerializer(data=request.data)

@@ -19,7 +19,7 @@ class SubejectCreateTestCase(userCreateSetUp):
         data = {
             "category": "test",
             "title": "localhostGroup",
-            "discription": "Hello my name ist local",
+            "description": "Hello my name ist local",
         }
 
         url = reverse("groups:groups")

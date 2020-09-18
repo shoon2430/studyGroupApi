@@ -11,6 +11,7 @@ class SubjectAdmin(admin.ModelAdmin):
                 "fields": (
                     "group_id",
                     "title",
+                    "description",
                     "writer",
                     "time",
                 )

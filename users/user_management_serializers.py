@@ -19,7 +19,7 @@ class myGroupInfoSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "category",
-            "discription",
+            "description",
             "subjectList",
         )
 

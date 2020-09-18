@@ -44,7 +44,7 @@ class SubjectSimpleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subject
-        fields = ("subject_id", "time", "title", "writer", "todoGroups")
+        fields = ("subject_id", "time", "title", "writer", "description", "todoGroups")
 
 
 class groupSubjectsSerializer(serializers.ModelSerializer):
