@@ -8,7 +8,7 @@ from todos.serializers import SubjectSimpleSerializer
 
 class GroupBaseSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
-    leader = UserBaseSerializer(read_only=True)
+    leader = userSimpleInfoSerializer(read_only=True)
     time = serializers.IntegerField(read_only=True)
     members = userSimpleInfoSerializer(many=True, read_only=True)
     attends = userSimpleInfoSerializer(many=True, read_only=True)

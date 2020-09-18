@@ -24,6 +24,19 @@ todo 정보 조회
 """
 
 
+class leaderInnerGroupsApi(APIView):
+    """
+    내가 그룹장인 경우
+    """
+
+    def get(self, request):
+        user = request_get_user(request)
+        group = user.attendGroups.all()
+        group = group.filter(leader=user)
+        serializer = myGroupInfoSerializer(group, many=True)
+        return Response(serializer.data)
+
+
 class userInnerGroupsApi(APIView):
     """
     내가 속한 그룹들 보기

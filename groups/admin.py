@@ -8,11 +8,11 @@ class GroupAdmin(admin.ModelAdmin):
     COSTOM_FIELDS = (
         (
             ("GroupInfo"),
-            {"fields": ("photo", "category", "title", "discription", "time")},
+            {"fields": ("photo", "category", "title", "time")},
         ),
         (("GroupInfo users"), {"fields": ("leader", "members", "attends")}),
     )
 
     fieldsets = COSTOM_FIELDS
 
-    list_display = ("time", "category", "title", "discription", "leader")
+    list_display = ("time", "category", "title", "leader")
