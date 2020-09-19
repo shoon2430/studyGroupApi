@@ -72,7 +72,7 @@ class subjectDetailApi(APIView):
         serializer = SubjectSimpleSerializer(subject)
         return Response(serializer.data)
 
-    def patch(self, request, group_pk, subject_pk):
+    def put(self, request, group_pk, subject_pk):
         user = request_get_user(request)
         group = (get_object_or_404(Group, pk=group_pk),)
 
@@ -112,7 +112,7 @@ class todoGroupCreateApi(APIView):
 
 
 class todoGroupDetailApi(APIView):
-    def patch(self, request, subject_pk, todoGoup_pk):
+    def put(self, request, subject_pk, todoGoup_pk):
 
         serializer = todoGroupDetailSerializer(data=request.data)
         if serializer.is_valid():

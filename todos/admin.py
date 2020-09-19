@@ -62,6 +62,7 @@ class TodoAdmin(admin.ModelAdmin):
                     "todoGroup_id",
                     "time",
                     "title",
+                    "progress",
                     "writer",
                 )
             },

@@ -50,13 +50,13 @@ class SubejectCreateTestCase(userCreateSetUp):
 
         # 해당그룹의 리더가 수정시
         self.client.credentials(HTTP_AUTHORIZATION=f"JWT {self.jwt_token_1}")
-        response = self.client.patch(url, data, format="json")
+        response = self.client.put(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content)["title"], "Change_subjectTest")
 
         # 그룹의 리더가 아닌 사람이 수정시
         self.client.credentials(HTTP_AUTHORIZATION=f"JWT {self.jwt_token_2}")
-        response = self.client.patch(url, data, format="json")
+        response = self.client.put(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(json.loads(response.content)["detail"], "그룹장만 승인이 가능합니다.")
 
@@ -92,13 +92,13 @@ class SubejectCreateTestCase(userCreateSetUp):
         # 그룹 참여요청 (맴버)
         self.client.credentials(HTTP_AUTHORIZATION=f"JWT {self.jwt_token_2}")
         url = reverse("groups:attend", args=[group.pk])
-        response = self.client.patch(url, format="json")
+        response = self.client.put(url, format="json")
 
         # 그룹 승인요청 (리더)
         self.client.credentials(HTTP_AUTHORIZATION=f"JWT {self.jwt_token_1}")
         url = reverse("groups:confirm", args=[group.pk])
         data = {"userId": member.username}
-        response = self.client.patch(url, data, format="json")
+        response = self.client.put(url, data, format="json")
 
         url = reverse(
             "todos:todoGroups",
