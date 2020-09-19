@@ -75,7 +75,7 @@ class UserTestCase(APITestCase):
 
         # 토큰 세팅
         self.client.credentials(HTTP_AUTHORIZATION=f"JWT {self.jwt_token_1}")
-        response = self.client.patch(url, data, format="json")
+        response = self.client.put(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # 변경된 값 비교

@@ -34,7 +34,7 @@ class GroupTestCase(UserTestCase):
         url = reverse("groups:attend", args=[group.pk])
 
         # 그룹 참여요청
-        response = self.client.patch(url, format="json")
+        response = self.client.put(url, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(group.attends.get().username, self.user2["username"])
 
@@ -47,11 +47,11 @@ class GroupTestCase(UserTestCase):
         # 그룹 참여요청 (맴버)
         self.client.credentials(HTTP_AUTHORIZATION=f"JWT {self.jwt_token_2}")
         url = reverse("groups:attend", args=[group.pk])
-        response = self.client.patch(url, format="json")
+        response = self.client.put(url, format="json")
 
         # 그룹 참여요청 (맴버)
         url = reverse("groups:attend", args=[group.pk])
-        response = self.client.patch(url, format="json")
+        response = self.client.put(url, format="json")
         # 이미 참여신청 중이면 에러
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -63,7 +63,7 @@ class GroupTestCase(UserTestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f"JWT {self.jwt_token_1}")
         url = reverse("groups:confirm", args=[group.pk])
         data = {"userId": member.username}
-        response = self.client.patch(url, data, format="json")
+        response = self.client.put(url, data, format="json")
 
         # 맴버에 추가되었는지 확인
         self.assertIn(member, group.members.all())
@@ -72,7 +72,7 @@ class GroupTestCase(UserTestCase):
         # 그룹 승인요청 (리더)
         url = reverse("groups:confirm", args=[group.pk])
         data = {"userId": leader.username}
-        response = self.client.patch(url, data, format="json")
+        response = self.client.put(url, data, format="json")
 
         # 이미 참여중이면 에러
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)

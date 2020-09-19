@@ -55,7 +55,7 @@ class userDetailApi(APIView):
         serializer = UserBaseSerializer(user)
         return Response(serializer.data)
 
-    def patch(self, request):
+    def put(self, request):
         user = request_get_user(request)
         serializer = UserUpdateSerializer(data=request.data)
         if serializer.is_valid():
