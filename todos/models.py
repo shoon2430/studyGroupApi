@@ -17,6 +17,9 @@ class Subject(TimeStampModel):
         on_delete=models.CASCADE,
     )
 
+    def __str__(self):
+        return f"Subject [{self.title}]"
+
 
 class TodoGroup(TimeStampModel):
     PROGRESS_CREATE = "CREATE"
@@ -48,6 +51,9 @@ class TodoGroup(TimeStampModel):
         "users.User", related_name="todo_members", blank=True
     )
 
+    def __str__(self):
+        return f"TodoGroup [{self.title}]"
+
 
 class Todo(TimeStampModel):
     PROGRESS_CREATE = "CREATE"
@@ -73,3 +79,6 @@ class Todo(TimeStampModel):
         null=False,
         on_delete=models.CASCADE,
     )
+
+    def __str__(self):
+        return f"Todo [{self.title}]"
