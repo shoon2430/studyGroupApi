@@ -1,8 +1,7 @@
 from rest_framework import serializers
 from .models import Group
 from users.models import User
-from users.serializers import UserBaseSerializer, userSimpleInfoSerializer
-
+from users.serializers import userSimpleInfoSerializer
 from todos.serializers import SubjectSimpleSerializer
 
 
@@ -49,6 +48,7 @@ class GroupInfoShowSerializer(serializers.ModelSerializer):
     subjectList = SubjectSimpleSerializer(source="group", many=True)
     members = userSimpleInfoSerializer(many=True)
     attends = userSimpleInfoSerializer(many=True)
+    leader = userSimpleInfoSerializer(read_only=True)
 
     class Meta:
         model = Group
