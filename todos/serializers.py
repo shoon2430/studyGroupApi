@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from groups.models import Group
 from users.models import User
-from users.serializers import UserBaseSerializer
 from .models import Subject, Todo, TodoGroup
 from users.models import User
 

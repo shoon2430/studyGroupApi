@@ -8,6 +8,7 @@ jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 from .models import User
+from groups.models import Group
 
 
 class userSimpleInfoSerializer(serializers.ModelSerializer):
@@ -19,8 +20,20 @@ class userSimpleInfoSerializer(serializers.ModelSerializer):
         )
 
 
+class groupSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = (
+            "id",
+            "category",
+            "title",
+        )
+
+
 # 기본 유저정보 조회 Serializer
 class UserBaseSerializer(serializers.ModelSerializer):
+    attendGroups = groupSimpleSerializer(many=True)
+
     class Meta:
         model = User
         fields = (
@@ -35,7 +48,7 @@ class UserBaseSerializer(serializers.ModelSerializer):
             "date_joined",
         )
         extra_kwargs = {
-            # "password": {"write_only": True},
+            "password": {"write_only": True},
         }
 
 
