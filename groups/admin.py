@@ -15,4 +15,4 @@ class GroupAdmin(admin.ModelAdmin):
 
     fieldsets = COSTOM_FIELDS
 
-    list_display = ("time", "category", "title", "leader")
+    list_display = ("title", "category", "time", "leader")

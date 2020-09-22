@@ -13,7 +13,16 @@ class todoAllSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Todo
-        fields = ("todo_id", "todoGroup_id", "time", "writer", "progress", "created")
+        fields = (
+            "todo_id",
+            "todoGroup_id",
+            "time",
+            "writer",
+            "progress",
+            "created",
+            "start",
+            "end",
+        )
 
 
 class TodoGroupSimpleSerializer(serializers.ModelSerializer):
@@ -33,6 +42,8 @@ class TodoGroupSimpleSerializer(serializers.ModelSerializer):
             "leader",
             "members",
             "todoList",
+            "start",
+            "end",
         )
 
 
@@ -40,10 +51,19 @@ class SubjectSimpleSerializer(serializers.ModelSerializer):
     todoGroups = TodoGroupSimpleSerializer(source="subject", many=True)
     subject_id = serializers.CharField(source="id")
     writer = userSimpleInfoSerializer()
+    isTodo = serializers.BooleanField(default=False, read_only=True)
 
     class Meta:
         model = Subject
-        fields = ("subject_id", "time", "title", "writer", "description", "todoGroups")
+        fields = (
+            "subject_id",
+            "time",
+            "title",
+            "writer",
+            "description",
+            "todoGroups",
+            "isTodo",
+        )
 
 
 class groupSubjectsSerializer(serializers.ModelSerializer):
