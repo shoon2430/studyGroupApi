@@ -37,6 +37,8 @@ class TodoGroupAdmin(admin.ModelAdmin):
                     "progress",
                     "leader",
                     "members",
+                    "start",
+                    "end",
                 )
             },
         ),
@@ -64,6 +66,8 @@ class TodoAdmin(admin.ModelAdmin):
                     "title",
                     "progress",
                     "writer",
+                    "start",
+                    "end",
                 )
             },
         ),

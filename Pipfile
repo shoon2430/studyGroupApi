@@ -18,6 +18,7 @@ pipenv-to-requirements = "*"
 djangorestframework-jwt = "*"
 django-rest-auth = "*"
 django-allauth = "*"
+django-seed = "*"
 
 [requires]
 python_version = "3.7"

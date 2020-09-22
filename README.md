@@ -50,3 +50,35 @@ pipenv run pipenv_to_requirements
 ```
 docker-compose up --build
 ```
+
+### 테스트 데이터 생성
+
+유저 생성
+
+```
+python manage.py seed_users --number {count}
+```
+
+그룹 생성
+
+```
+python manage.py seed_groups --number {count}
+```
+
+그룹목표 생성
+
+```
+python manage.py seed_subjects --number {count}
+```
+
+Todo그룹 생성
+
+```
+python manage.py seed_todogroups --number {count}
+```
+
+Todo 생성
+
+```
+python manage.py seed_todos --number {count}
+```

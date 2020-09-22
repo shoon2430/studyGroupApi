@@ -50,6 +50,8 @@ class TodoGroup(TimeStampModel):
     members = models.ManyToManyField(
         "users.User", related_name="todo_members", blank=True
     )
+    start = models.DateTimeField(blank=False, null=False)
+    end = models.DateTimeField(blank=False, null=False)
 
     def __str__(self):
         return f"TodoGroup [{self.title}]"
@@ -79,6 +81,8 @@ class Todo(TimeStampModel):
         null=False,
         on_delete=models.CASCADE,
     )
+    start = models.DateTimeField(blank=False, null=False)
+    end = models.DateTimeField(blank=False, null=False)
 
     def __str__(self):
         return f"Todo [{self.title}]"
