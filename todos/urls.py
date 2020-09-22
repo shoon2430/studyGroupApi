@@ -11,14 +11,6 @@ from .views import (
 
 app_name = "todos"
 
-"""
-1. subject CRUD
-
-1. todo CRUD
-
-"""
-
-
 urlpatterns = [
     path(
         "groups/<uuid:group_pk>/subjects/", subjectCreateApi.as_view(), name="subjects"

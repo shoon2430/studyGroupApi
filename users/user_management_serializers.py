@@ -3,8 +3,8 @@ from django.contrib.auth import authenticate
 
 from rest_framework import serializers
 
-from todos.serializers import todoAllSerializer
-from todos.serializers import SubjectSimpleSerializer
+from todos.serializers import todoAllSerializer, SubjectSimpleSerializer
+from users.serializers import userSimpleInfoSerializer
 from .models import User
 from groups.models import Group
 from todos.models import Subject, TodoGroup, Todo
@@ -12,6 +12,8 @@ from todos.models import Subject, TodoGroup, Todo
 # 그룹 상세 정보 조회
 class myGroupInfoSerializer(serializers.ModelSerializer):
     subjectList = SubjectSimpleSerializer(source="group", many=True)
+    members = userSimpleInfoSerializer(many=True)
+    attends = userSimpleInfoSerializer(many=True)
 
     class Meta:
         model = Group
@@ -21,6 +23,8 @@ class myGroupInfoSerializer(serializers.ModelSerializer):
             "category",
             "description",
             "subjectList",
+            "members",
+            "attends",
         )
 
 

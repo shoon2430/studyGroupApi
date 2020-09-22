@@ -10,6 +10,8 @@ from users.serializers import userSimpleInfoSerializer
 class todoAllSerializer(serializers.ModelSerializer):
     todo_id = serializers.CharField(source="id")
     writer = userSimpleInfoSerializer()
+    start = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
+    end = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
 
     class Meta:
         model = Todo
@@ -30,6 +32,8 @@ class TodoGroupSimpleSerializer(serializers.ModelSerializer):
     todoList = todoAllSerializer(source="todo_group", many=True)
     leader = userSimpleInfoSerializer()
     members = userSimpleInfoSerializer(many=True)
+    start = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
+    end = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
 
     class Meta:
         model = TodoGroup
