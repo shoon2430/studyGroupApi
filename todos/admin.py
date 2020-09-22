@@ -21,7 +21,7 @@ class SubjectAdmin(admin.ModelAdmin):
 
     fieldsets = COSTOM_FIELDS
 
-    list_display = ("title", "writer", "time")
+    list_display = ("title", "group_id", "writer", "time")
 
 
 @admin.register(TodoGroup)
@@ -48,6 +48,7 @@ class TodoGroupAdmin(admin.ModelAdmin):
 
     list_display = (
         "title",
+        "subject_id",
         "leader",
         "time",
     )
@@ -75,4 +76,4 @@ class TodoAdmin(admin.ModelAdmin):
 
     fieldsets = COSTOM_FIELDS
 
-    list_display = ("title", "writer", "time")
+    list_display = ("title", "todoGroup_id", "writer", "time")
