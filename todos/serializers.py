@@ -121,6 +121,7 @@ class SubjectBaseSerializer(serializers.ModelSerializer):
             "group_id",
             "time",
             "title",
+            "description",
             "writer",
         )
 
@@ -128,6 +129,7 @@ class SubjectBaseSerializer(serializers.ModelSerializer):
 
         subject = Subject.objects.create(
             title=validated_data["title"],
+            description=validated_data["description"],
             time=self.group.time,
             group_id=self.group,
             writer=self.leader,
@@ -139,7 +141,10 @@ class SubjectBaseSerializer(serializers.ModelSerializer):
 class SubjectDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
-        fields = ("title",)
+        fields = (
+            "title",
+            "description",
+        )
 
 
 class todoGroupSimpleSerializer(serializers.ModelSerializer):

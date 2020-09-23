@@ -100,3 +100,31 @@ class userLoginAPI(APIView):
             return Response(serializer.data, status=200)
 
         return Response(serializer.errors, status=400)
+
+
+class validateUserIdApi(APIView):
+
+    permission_classes = []
+    authentication_classes = ()
+
+    def post(self, request):
+        username = request.data["username"]
+        for user in User.objects.all():
+            if user.username == username:
+                return Response("이미 사용중인 아이디가 존재합니다", status=400)
+        return Response({"username": username}, status=200)
+
+
+class userChangePasswordApi(APIView):
+    """
+    비밀번호 변경
+    """
+
+    permission_classes = []
+    authentication_classes = ()
+
+    def put(self, request):
+        user = request_get_user(request)
+        user.set_password(request.data["password"])
+        user.save()
+        return Response("비밀번호가 변경되었습니다.", status=200)
