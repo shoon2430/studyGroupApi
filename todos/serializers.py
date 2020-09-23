@@ -10,6 +10,8 @@ from users.serializers import userSimpleInfoSerializer
 class todoAllSerializer(serializers.ModelSerializer):
     todo_id = serializers.CharField(source="id")
     writer = userSimpleInfoSerializer()
+    start = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
+    end = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
 
     class Meta:
         model = Todo
@@ -30,6 +32,8 @@ class TodoGroupSimpleSerializer(serializers.ModelSerializer):
     todoList = todoAllSerializer(source="todo_group", many=True)
     leader = userSimpleInfoSerializer()
     members = userSimpleInfoSerializer(many=True)
+    start = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
+    end = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
 
     class Meta:
         model = TodoGroup
@@ -117,6 +121,7 @@ class SubjectBaseSerializer(serializers.ModelSerializer):
             "group_id",
             "time",
             "title",
+            "description",
             "writer",
         )
 
@@ -124,6 +129,7 @@ class SubjectBaseSerializer(serializers.ModelSerializer):
 
         subject = Subject.objects.create(
             title=validated_data["title"],
+            description=validated_data["description"],
             time=self.group.time,
             group_id=self.group,
             writer=self.leader,
@@ -135,7 +141,10 @@ class SubjectBaseSerializer(serializers.ModelSerializer):
 class SubjectDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
-        fields = ("title",)
+        fields = (
+            "title",
+            "description",
+        )
 
 
 class todoGroupSimpleSerializer(serializers.ModelSerializer):

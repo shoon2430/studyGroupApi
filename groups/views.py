@@ -107,7 +107,6 @@ class confirmMemberToGroupApi(APIView):
 
     def put(self, request, pk):
         group = self.get_object(pk)
-        print(group)
         userIdList = request.data["userIdList"]
 
         if userIdList:
